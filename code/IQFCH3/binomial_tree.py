@@ -64,9 +64,10 @@ def option_price_by_binomial_tree(
             option_tree[n - 1].append(v)
 
     return {
-        'asset' : asset_tree,
-        'option' : option_tree,
+        'price' : option_tree[0][0],
         'inter' : {
+            'asset' : asset_tree,
+            'option' : option_tree,
             'time_step' : time_step,
             'discount_factor' : discount_factor,
             'u' : u, 'd' : d, 'p' : p,
@@ -95,7 +96,17 @@ if __name__ == '__main__':
             print()
 
     result = option_price_by_binomial_tree(100., 0.2, 0.1, 100, 1/3, 4)
-    print_binomial_tree(result['asset'])
-    print_binomial_tree(result['option'])
+    print_binomial_tree(result['inter']['asset'])
+    print_binomial_tree(result['inter']['option'])
 
     print(result)
+
+    import matplotlib.pyplot as plt
+    step_number_list = range(3, 253, 2)
+    result_list = [option_price_by_binomial_tree(100., 0.2, 0.1, 100, 1/3, step_number)['price'] for step_number in step_number_list ]
+    plt.scatter(step_number_list, result_list, label='odd steps')
+    step_number_list = range(2, 253, 2)
+    result_list = [option_price_by_binomial_tree(100., 0.2, 0.1, 100, 1/3, step_number)['price'] for step_number in step_number_list ]
+    plt.scatter(step_number_list, result_list, label='even steps')
+    plt.legend()
+    plt.show()
